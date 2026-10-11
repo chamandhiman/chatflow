@@ -340,7 +340,12 @@ export function Studio({ id }: { id: string }) {
             <div
               className={`mt-auto flex p-5 ${bot.position === "right" ? "justify-end" : "justify-start"}`}
             >
-              <ChatWidgetPreview bot={bot} mobile={mobile} launcher={launcher} questions={questions.split('\n').filter(Boolean)} />
+              <ChatWidgetPreview
+                bot={bot}
+                mobile={mobile}
+                launcher={launcher}
+                questions={questions.split("\n").filter(Boolean)}
+              />
             </div>
           </div>
           <p className="mt-3 text-center text-[10px] text-muted-foreground">

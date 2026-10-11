@@ -11,7 +11,17 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import mark from "@/assets/chatflow-mark.png";
 import type { Chatbot, ChatMessage } from "@/types/chatbot";
-export function ChatWidgetPreview({ bot, mobile = false, launcher = 'Message', questions }: { bot: Chatbot; mobile?: boolean; launcher?: string; questions?: string[] }) {
+export function ChatWidgetPreview({
+  bot,
+  mobile = false,
+  launcher = "Message",
+  questions,
+}: {
+  bot: Chatbot;
+  mobile?: boolean;
+  launcher?: string;
+  questions?: string[];
+}) {
   const [open, setOpen] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   function send(text: string) {
@@ -64,11 +74,13 @@ export function ChatWidgetPreview({ bot, mobile = false, launcher = 'Message', q
               </Message>
               {messages.length === 0 && (
                 <div className="mt-4 space-y-2">
-                  {(questions || [
-                    "How can I get started?",
-                    "What plans do you offer?",
-                    "I need help with my account",
-                  ]).map((q) => (
+                  {(
+                    questions || [
+                      "How can I get started?",
+                      "What plans do you offer?",
+                      "I need help with my account",
+                    ]
+                  ).map((q) => (
                     <Button
                       key={q}
                       variant="outline"
@@ -115,7 +127,15 @@ export function ChatWidgetPreview({ bot, mobile = false, launcher = 'Message', q
         onClick={() => setOpen(!open)}
         className={`widget-header rounded-full p-0 ${bot.launcherSize < 50 ? "size-11" : bot.launcherSize > 60 ? "size-16" : "size-14"}`}
       >
-        {open ? <X className="size-5" /> : launcher === 'Bot' ? <Bot className="size-5" /> : launcher === 'Headphones' ? <Headphones className="size-5" /> : <MessageCircle className="size-5" />}
+        {open ? (
+          <X className="size-5" />
+        ) : launcher === "Bot" ? (
+          <Bot className="size-5" />
+        ) : launcher === "Headphones" ? (
+          <Headphones className="size-5" />
+        ) : (
+          <MessageCircle className="size-5" />
+        )}
       </Button>
     </div>
   );
