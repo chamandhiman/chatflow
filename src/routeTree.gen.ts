@@ -10,33 +10,218 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as BillingRouteImport } from './routes/billing'
+import { Route as ChatbotsRouteImport } from './routes/chatbots'
+import { Route as ConversationsRouteImport } from './routes/conversations'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as InstallRouteImport } from './routes/install'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as LegalRouteImport } from './routes/legal'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ProductRouteImport } from './routes/product'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ChatbotsIdStudioRouteImport } from './routes/chatbots.$id.studio'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatbotsRoute = ChatbotsRouteImport.update({
+  id: '/chatbots',
+  path: '/chatbots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConversationsRoute = ConversationsRouteImport.update({
+  id: '/conversations',
+  path: '/conversations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstallRoute = InstallRouteImport.update({
+  id: '/install',
+  path: '/install',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductRoute = ProductRouteImport.update({
+  id: '/product',
+  path: '/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatbotsIdStudioRoute = ChatbotsIdStudioRouteImport.update({
+  id: '/$id/studio',
+  path: '/$id/studio',
+  getParentRoute: () => ChatbotsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/billing': typeof BillingRoute
+  '/chatbots': typeof ChatbotsRouteWithChildren
+  '/conversations': typeof ConversationsRoute
+  '/dashboard': typeof DashboardRoute
+  '/features': typeof FeaturesRoute
+  '/help': typeof HelpRoute
+  '/install': typeof InstallRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/settings': typeof SettingsRoute
+  '/chatbots/$id/studio': typeof ChatbotsIdStudioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/billing': typeof BillingRoute
+  '/chatbots': typeof ChatbotsRouteWithChildren
+  '/conversations': typeof ConversationsRoute
+  '/dashboard': typeof DashboardRoute
+  '/features': typeof FeaturesRoute
+  '/help': typeof HelpRoute
+  '/install': typeof InstallRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/settings': typeof SettingsRoute
+  '/chatbots/$id/studio': typeof ChatbotsIdStudioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/billing': typeof BillingRoute
+  '/chatbots': typeof ChatbotsRouteWithChildren
+  '/conversations': typeof ConversationsRoute
+  '/dashboard': typeof DashboardRoute
+  '/features': typeof FeaturesRoute
+  '/help': typeof HelpRoute
+  '/install': typeof InstallRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/settings': typeof SettingsRoute
+  '/chatbots/$id/studio': typeof ChatbotsIdStudioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/billing'
+    | '/chatbots'
+    | '/conversations'
+    | '/dashboard'
+    | '/features'
+    | '/help'
+    | '/install'
+    | '/knowledge'
+    | '/legal'
+    | '/pricing'
+    | '/product'
+    | '/settings'
+    | '/chatbots/$id/studio'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/analytics'
+    | '/billing'
+    | '/chatbots'
+    | '/conversations'
+    | '/dashboard'
+    | '/features'
+    | '/help'
+    | '/install'
+    | '/knowledge'
+    | '/legal'
+    | '/pricing'
+    | '/product'
+    | '/settings'
+    | '/chatbots/$id/studio'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/billing'
+    | '/chatbots'
+    | '/conversations'
+    | '/dashboard'
+    | '/features'
+    | '/help'
+    | '/install'
+    | '/knowledge'
+    | '/legal'
+    | '/pricing'
+    | '/product'
+    | '/settings'
+    | '/chatbots/$id/studio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  BillingRoute: typeof BillingRoute
+  ChatbotsRoute: typeof ChatbotsRouteWithChildren
+  ConversationsRoute: typeof ConversationsRoute
+  DashboardRoute: typeof DashboardRoute
+  FeaturesRoute: typeof FeaturesRoute
+  HelpRoute: typeof HelpRoute
+  InstallRoute: typeof InstallRoute
+  KnowledgeRoute: typeof KnowledgeRoute
+  LegalRoute: typeof LegalRoute
+  PricingRoute: typeof PricingRoute
+  ProductRoute: typeof ProductRoute
+  SettingsRoute: typeof SettingsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +233,134 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chatbots': {
+      id: '/chatbots'
+      path: '/chatbots'
+      fullPath: '/chatbots'
+      preLoaderRoute: typeof ChatbotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conversations': {
+      id: '/conversations'
+      path: '/conversations'
+      fullPath: '/conversations'
+      preLoaderRoute: typeof ConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/install': {
+      id: '/install'
+      path: '/install'
+      fullPath: '/install'
+      preLoaderRoute: typeof InstallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product': {
+      id: '/product'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chatbots/$id/studio': {
+      id: '/chatbots/$id/studio'
+      path: '/$id/studio'
+      fullPath: '/chatbots/$id/studio'
+      preLoaderRoute: typeof ChatbotsIdStudioRouteImport
+      parentRoute: typeof ChatbotsRoute
+    }
   }
 }
 
+interface ChatbotsRouteChildren {
+  ChatbotsIdStudioRoute: typeof ChatbotsIdStudioRoute
+}
+
+const ChatbotsRouteChildren: ChatbotsRouteChildren = {
+  ChatbotsIdStudioRoute: ChatbotsIdStudioRoute,
+}
+
+const ChatbotsRouteWithChildren = ChatbotsRoute._addFileChildren(
+  ChatbotsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  BillingRoute: BillingRoute,
+  ChatbotsRoute: ChatbotsRouteWithChildren,
+  ConversationsRoute: ConversationsRoute,
+  DashboardRoute: DashboardRoute,
+  FeaturesRoute: FeaturesRoute,
+  HelpRoute: HelpRoute,
+  InstallRoute: InstallRoute,
+  KnowledgeRoute: KnowledgeRoute,
+  LegalRoute: LegalRoute,
+  PricingRoute: PricingRoute,
+  ProductRoute: ProductRoute,
+  SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
