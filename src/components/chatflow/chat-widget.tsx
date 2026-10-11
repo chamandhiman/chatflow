@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUp, ChevronDown, MessageCircle, X, ShieldCheck } from "lucide-react";
+import { ArrowUp, ChevronDown, MessageCircle, X, ShieldCheck, Bot, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Conversation, ConversationContent } from "@/components/ai-elements/conversation";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import mark from "@/assets/chatflow-mark.png";
 import type { Chatbot, ChatMessage } from "@/types/chatbot";
-export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobile?: boolean }) {
+export function ChatWidgetPreview({ bot, mobile = false, launcher = 'Message', questions }: { bot: Chatbot; mobile?: boolean; launcher?: string; questions?: string[] }) {
   const [open, setOpen] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   function send(text: string) {
@@ -31,7 +31,7 @@ export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobil
     >
       {open && (
         <div className="mb-4 flex h-[420px] w-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-xl">
-          <div className="widget-header flex items-center gap-3 p-4">
+          <div className="widget-header flex shrink-0 items-center gap-3 p-4">
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary-foreground/15">
               <img src={mark} width={26} height={26} alt="ChatFlow assistant" />
             </span>
@@ -52,7 +52,7 @@ export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobil
               <ChevronDown />
             </Button>
           </div>
-          <Conversation>
+          <Conversation className="min-h-0">
             <ConversationContent className="gap-4 px-4 py-5">
               <div className="text-center text-[9px] text-muted-foreground">
                 Live preview · sample conversation
@@ -64,11 +64,11 @@ export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobil
               </Message>
               {messages.length === 0 && (
                 <div className="mt-4 space-y-2">
-                  {[
+                  {(questions || [
                     "How can I get started?",
                     "What plans do you offer?",
                     "I need help with my account",
-                  ].map((q) => (
+                  ]).map((q) => (
                     <Button
                       key={q}
                       variant="outline"
@@ -90,7 +90,7 @@ export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobil
               ))}
             </ConversationContent>
           </Conversation>
-          <div className="border-t border-border px-3 pt-3">
+          <div className="shrink-0 border-t border-border px-3 pt-3">
             <PromptInput onSubmit={({ text }) => send(text)}>
               <PromptInputTextarea
                 aria-label="Preview message"
@@ -115,7 +115,7 @@ export function ChatWidgetPreview({ bot, mobile = false }: { bot: Chatbot; mobil
         onClick={() => setOpen(!open)}
         className={`widget-header rounded-full p-0 ${bot.launcherSize < 50 ? "size-11" : bot.launcherSize > 60 ? "size-16" : "size-14"}`}
       >
-        {open ? <X className="size-5" /> : <MessageCircle className="size-5" />}
+        {open ? <X className="size-5" /> : launcher === 'Bot' ? <Bot className="size-5" /> : launcher === 'Headphones' ? <Headphones className="size-5" /> : <MessageCircle className="size-5" />}
       </Button>
     </div>
   );

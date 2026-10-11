@@ -344,8 +344,7 @@
     font-size: 26px;
   }
   .mini-sparkline {
-    width: 60px;
-    right: 12px;
+    display: none;
   }
   .panel-heading {
     padding: 17px;
