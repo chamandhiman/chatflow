@@ -1,0 +1,250 @@
+import {
+  Check,
+  CreditCard,
+  ArrowUpRight,
+  Download,
+  Zap,
+  AlertTriangle,
+  ShieldCheck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { usePrototype } from "@/data/prototype-context";
+import { PageHeader, PanelHeading, Status } from "@/components/chatflow/shared";
+import { toast } from "sonner";
+export const plans = [
+  {
+    name: "Starter",
+    price: 19,
+    description: "For your first AI assistant.",
+    features: [
+      "1 chatbot",
+      "2,000 AI messages / month",
+      "Website & document sources",
+      "Basic analytics",
+    ],
+  },
+  {
+    name: "Business",
+    price: 49,
+    description: "For teams ready to grow.",
+    features: [
+      "5 chatbots",
+      "10,000 AI messages / month",
+      "Lead collection & handoff",
+      "Advanced analytics",
+      "3 team members",
+    ],
+  },
+  {
+    name: "Agency",
+    price: 149,
+    description: "For multiple clients and brands.",
+    features: [
+      "20 chatbots",
+      "50,000 AI messages / month",
+      "Multiple workspaces",
+      "White-label widget",
+      "10 team members",
+    ],
+  },
+];
+export function PricingCards({ marketing = false }: { marketing?: boolean }) {
+  const { plan, setPlan } = usePrototype();
+  return (
+    <div className="grid gap-5 md:grid-cols-3">
+      {plans.map((p) => (
+        <article
+          key={p.name}
+          className={`panel relative flex flex-col p-6 ${p.name === "Business" ? "border-primary/70" : ""}`}
+        >
+          {p.name === "Business" && (
+            <span className="absolute -top-3 left-5 rounded bg-primary px-3 py-1 text-[9px] font-semibold text-primary-foreground">
+              MOST POPULAR
+            </span>
+          )}
+          <h3 className="text-lg font-bold">{p.name}</h3>
+          <p className="mt-2 text-xs text-muted-foreground">{p.description}</p>
+          <div className="my-6">
+            <span className="font-display text-4xl font-bold">${p.price}</span>
+            <span className="ml-2 text-xs text-muted-foreground">/ month</span>
+          </div>
+          <Button
+            variant={p.name === "Business" ? "default" : "outline"}
+            disabled={!marketing && plan === p.name}
+            onClick={() => {
+              setPlan(p.name);
+              toast.success(`${p.name} selected for this prototype — no payment taken`);
+            }}
+          >
+            {!marketing && plan === p.name ? (
+              <>
+                <Check />
+                Current plan
+              </>
+            ) : (
+              <>
+                Choose {p.name}
+                <ArrowUpRight />
+              </>
+            )}
+          </Button>
+          <div className="mt-6 space-y-3">
+            {p.features.map((f) => (
+              <div key={f} className="flex items-start gap-2 text-xs">
+                <Check className="size-3.5 shrink-0 text-success" />
+                <span className="text-muted-foreground">{f}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+export function Billing() {
+  const { plan, setPlan } = usePrototype();
+  function invoice(month: string) {
+    const blob = new Blob(
+      [
+        `ChatFlow AI — PROTOTYPE INVOICE\nMonth: ${month} 2026\nBusiness plan: $49.00\nThis is an illustrative document. No payment has been made.`,
+      ],
+      { type: "text/plain" },
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `chatflow-demo-invoice-${month.toLowerCase()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Sample invoice downloaded");
+  }
+  return (
+    <>
+      <PageHeader
+        title="Billing & Usage"
+        description="A plan for every stage of your conversations."
+      />
+      <div className="mb-6 grid gap-5 lg:grid-cols-2">
+        <section className="panel p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Your current plan</span>
+            <Status value="Active" />
+          </div>
+          <div className="my-5 flex items-center gap-3">
+            <span className="grid size-11 place-items-center rounded-lg bg-primary/15 text-primary">
+              <Zap />
+            </span>
+            <div>
+              <h2 className="text-xl font-bold">{plan}</h2>
+              <span className="text-xs text-muted-foreground">
+                ${plans.find((p) => p.name === plan)?.price} / month · example subscription
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between border-t border-border pt-4">
+            <span className="text-[11px] text-muted-foreground">
+              Next sample billing date: Nov 1, 2026
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setPlan("Agency");
+                toast.success("Agency plan selected locally — no charge");
+              }}
+            >
+              Upgrade plan
+              <ArrowUpRight />
+            </Button>
+          </div>
+        </section>
+        <section className="panel p-6">
+          <div className="flex justify-between text-xs">
+            <span>Monthly AI messages</span>
+            <span className="text-primary">84.2%</span>
+          </div>
+          <div className="mt-5">
+            <span className="font-display text-3xl font-bold">8,420</span>
+            <span className="ml-2 text-muted-foreground">/ 10,000</span>
+          </div>
+          <div className="progress-track mt-5">
+            <div className="w-[84.2%]" />
+          </div>
+          <div className="mt-4 flex items-start gap-2 text-[11px] text-amber">
+            <AlertTriangle className="size-3.5 shrink-0" />
+            <p>You’re nearing your example monthly message limit.</p>
+          </div>
+        </section>
+      </div>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-lg font-bold">Find your perfect fit</h2>
+        <span className="text-[10px] text-muted-foreground">Prototype pricing examples · USD</span>
+      </div>
+      <PricingCards />
+      <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
+        <section className="panel min-w-0">
+          <PanelHeading title="Billing history" />
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {["October", "September", "August"].map((m, i) => (
+                  <tr key={m}>
+                    <td>INV-2026-00{10 - i}</td>
+                    <td>{m} 1, 2026</td>
+                    <td>$49.00</td>
+                    <td>
+                      <Status value="Paid (demo)" />
+                    </td>
+                    <td>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={`Download ${m} invoice`}
+                        title="Download sample invoice"
+                        onClick={() => invoice(m)}
+                      >
+                        <Download />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section className="panel">
+          <PanelHeading title="Payment method" />
+          <div className="p-5">
+            <div className="flex items-center gap-3">
+              <span className="rounded border border-border px-2 py-1 text-xs font-bold">VISA</span>
+              <span className="text-xs">•••• •••• •••• 4242</span>
+            </div>
+            <p className="mt-2 text-[10px] text-muted-foreground">Expires 12/2028 · example card</p>
+            <Button
+              variant="outline"
+              className="mt-5 w-full text-xs"
+              onClick={() => toast.info("Payment setup is not connected in this UI prototype")}
+            >
+              <CreditCard />
+              Update payment method
+            </Button>
+          </div>
+        </section>
+      </div>
+      <p className="mt-5 flex items-center gap-2 text-[10px] text-muted-foreground">
+        <ShieldCheck className="size-3" />
+        All plans, invoices, and payment details are prototype examples. No billing service is
+        connected.
+      </p>
+    </>
+  );
+}

@@ -1,0 +1,191 @@
+import {
+  MessagesSquare,
+  Users,
+  Timer,
+  Target,
+  Monitor,
+  Smartphone,
+  Tablet,
+  ArrowUpRight,
+  ArrowRight,
+  CircleHelp,
+} from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import {
+  PageHeader,
+  DateRange,
+  StatCard,
+  PanelHeading,
+  BotIcon,
+} from "@/components/chatflow/shared";
+import { TrendChart } from "./dashboard";
+import { usePrototype } from "@/data/prototype-context";
+export function Analytics() {
+  const { bots } = usePrototype();
+  return (
+    <>
+      <PageHeader
+        title="Analytics"
+        description="Turn conversations into a clearer picture of your business."
+      >
+        <DateRange />
+      </PageHeader>
+      <div className="mb-6 grid grid-cols-2 gap-4 xl:grid-cols-4">
+        <StatCard
+          label="Total conversations"
+          value="1,284"
+          change="18.6%"
+          icon={<MessagesSquare className="size-4" />}
+        />
+        <StatCard
+          label="Unique visitors"
+          value="964"
+          change="14.2%"
+          icon={<Users className="size-4" />}
+        />
+        <StatCard
+          label="Average response time"
+          value="1.2s"
+          change="8.3% faster"
+          icon={<Timer className="size-4" />}
+        />
+        <StatCard
+          label="Lead conversion"
+          value="14.5%"
+          change="2.1%"
+          icon={<Target className="size-4" />}
+        />
+      </div>
+      <div className="mb-6 grid gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
+        <section className="panel">
+          <PanelHeading
+            title="Conversation trend"
+            subtitle="Sample activity across all your assistants."
+          />
+          <div className="p-5">
+            <TrendChart />
+          </div>
+        </section>
+        <section className="panel">
+          <PanelHeading title="Device breakdown" />
+          <div className="px-6 py-7">
+            <div className="mx-auto mb-7 flex size-32 items-center justify-center rounded-full border-[14px] border-primary border-r-cyan border-b-amber">
+              <div className="text-center">
+                <span className="block font-display text-xl font-bold">964</span>
+                <span className="text-[9px] text-muted-foreground">visitors</span>
+              </div>
+            </div>
+            {[
+              { name: "Desktop", value: 62, color: "primary", icon: Monitor },
+              { name: "Mobile", value: 30, color: "cyan", icon: Smartphone },
+              { name: "Tablet", value: 8, color: "amber", icon: Tablet },
+            ].map((d) => (
+              <div key={d.name} className="mb-3 flex items-center gap-2 text-xs">
+                <d.icon className={`size-3 text-${d.color}`} />
+                <span className="text-muted-foreground">{d.name}</span>
+                <span className="ml-auto font-medium">{d.value}%</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+      <div className="mb-6 grid gap-5 lg:grid-cols-2">
+        <section className="panel">
+          <PanelHeading
+            title="Most frequently asked questions"
+            subtitle="What’s on your visitors’ minds."
+          />
+          <div className="px-5 py-2">
+            {[
+              ["How do I reset my password?", 184],
+              ["What is your return policy?", 142],
+              ["Do you offer a free trial?", 118],
+              ["How can I upgrade my plan?", 96],
+              ["Where can I find my invoice?", 72],
+            ].map(([q, n], i) => (
+              <div
+                key={q}
+                className="flex items-center gap-3 border-b border-border py-4 last:border-0"
+              >
+                <span className="text-[10px] text-muted-foreground">0{i + 1}</span>
+                <span className="min-w-0 flex-1 text-xs">{q}</span>
+                <span className="text-[11px] font-semibold">{n}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="panel">
+          <PanelHeading
+            title="Unanswered questions"
+            subtitle="Opportunities to improve your knowledge."
+          />
+          <div className="p-5">
+            {[
+              "Do you support SSO for enterprise teams?",
+              "Can I migrate my data from another platform?",
+              "Do you have an API for custom integrations?",
+            ].map((q) => (
+              <div className="mb-4 flex items-start gap-3 border-b border-border pb-4" key={q}>
+                <CircleHelp className="mt-0.5 size-4 shrink-0 text-amber" />
+                <div>
+                  <p className="text-xs">{q}</p>
+                  <span className="mt-1 block text-[10px] text-muted-foreground">
+                    Support Assistant · sample question
+                  </span>
+                </div>
+              </div>
+            ))}
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/knowledge">
+                Improve knowledge base
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+        </section>
+      </div>
+      <section className="panel">
+        <PanelHeading title="Chatbot comparison" />
+        <div className="overflow-x-auto">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Chatbot</th>
+                <th>Conversations</th>
+                <th>Leads captured</th>
+                <th>Resolution rate</th>
+                <th>Response time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bots.map((b, i) => (
+                <tr key={b.id}>
+                  <td>
+                    <Link
+                      to="/chatbots/$id/studio"
+                      params={{ id: b.id }}
+                      className="flex items-center gap-3"
+                    >
+                      <BotIcon kind={b.kind} color={b.color} small />
+                      {b.name}
+                    </Link>
+                  </td>
+                  <td>{b.conversations}</td>
+                  <td>{[86, 72, 22, 6][i % 4]}</td>
+                  <td>
+                    <span className="text-success">{[94.2, 89.6, 92.1, 96.8][i % 4]}%</span>
+                  </td>
+                  <td>{[1.1, 1.3, 1.4, 0.9][i % 4]}s</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <p className="mt-4 text-[10px] text-muted-foreground">
+        All analytics are illustrative sample data, not measured website activity.
+      </p>
+    </>
+  );
+}

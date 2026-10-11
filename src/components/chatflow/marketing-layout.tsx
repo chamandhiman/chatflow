@@ -1,0 +1,92 @@
+import { Link } from "@tanstack/react-router";
+import { type ReactNode, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Brand } from "./shared";
+export function MarketingLayout({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="mx-auto grid h-20 max-w-[1240px] grid-cols-[minmax(0,1fr)_auto] items-center gap-5 border-b border-border px-6 lg:flex lg:justify-between">
+        <Link to="/">
+          <Brand />
+        </Link>
+        <nav className="hidden items-center gap-8 text-xs text-muted-foreground lg:flex">
+          <Link to="/product">Product</Link>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/help">Resources</Link>
+        </nav>
+        <div className="flex items-center gap-4">
+          <Button asChild variant="ghost" className="hidden text-xs sm:flex">
+            <Link to="/dashboard">
+              Sign In
+              <ArrowUpRight />
+            </Link>
+          </Button>
+          <Button asChild className="text-xs">
+            <Link to="/dashboard">
+              Start Building
+              <ArrowUpRight />
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle menu"
+            className="lg:hidden"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </Button>
+        </div>
+      </header>
+      {open && (
+        <nav className="flex flex-wrap justify-center gap-6 border-b border-border px-6 py-5 text-sm lg:hidden">
+          <Link to="/product">Product</Link>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
+          <Link to="/dashboard">Sign In</Link>
+        </nav>
+      )}
+      {children}
+      <footer className="mx-auto mt-20 max-w-[1240px] border-t border-border px-6 py-10">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <Brand />
+            <p className="mt-4 max-w-52 text-xs leading-relaxed text-muted-foreground">
+              Your conversations. In good hands.
+            </p>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-semibold">Product</h3>
+            <div className="flex flex-col gap-3 text-xs text-muted-foreground">
+              <Link to="/product">Overview</Link>
+              <Link to="/features">Features</Link>
+              <Link to="/pricing">Pricing</Link>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-semibold">Resources</h3>
+            <div className="flex flex-col gap-3 text-xs text-muted-foreground">
+              <Link to="/help">Help center</Link>
+              <Link to="/install">Installation guide</Link>
+              <Link to="/dashboard">Demo workspace</Link>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-semibold">Legal</h3>
+            <div className="flex flex-col gap-3 text-xs text-muted-foreground">
+              <Link to="/legal">Privacy placeholder</Link>
+              <Link to="/legal">Terms placeholder</Link>
+            </div>
+          </div>
+        </div>
+        <div className="mt-10 flex flex-wrap justify-between gap-3 border-t border-border pt-5 text-[10px] text-muted-foreground">
+          <span>© 2026 ChatFlow AI. All rights reserved.</span>
+          <span>Frontend prototype · no live AI service</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
