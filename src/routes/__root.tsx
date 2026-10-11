@@ -81,7 +81,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ChatFlow AI — Your AI workspace" },
-      { name: "description", content: "Build, customize, and manage your business AI assistants with ChatFlow AI." },
+      {
+        name: "description",
+        content: "Build, customize, and manage your business AI assistants with ChatFlow AI.",
+      },
       { name: "author", content: "ChatFlow AI" },
       { property: "og:title", content: "ChatFlow AI — Your AI workspace" },
       { property: "og:description", content: "Your business conversations, connected." },
@@ -94,7 +97,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -123,7 +129,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <PrototypeProvider><Outlet /><Toaster theme="dark" position="bottom-right" richColors /></PrototypeProvider>
+      <PrototypeProvider>
+        <Outlet />
+        <Toaster theme="dark" position="bottom-right" richColors />
+      </PrototypeProvider>
     </QueryClientProvider>
   );
 }

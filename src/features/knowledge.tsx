@@ -1,9 +1,334 @@
-import { useState } from 'react';
-import { Database, Globe, FileText, MessageSquare, Plus, Upload, Trash2, RefreshCw, MoreHorizontal, Check, File } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { usePrototype } from '@/data/prototype-context';
-import { PageHeader, SearchInput, Segments, Field, Status, EmptyState } from '@/components/chatflow/shared';
-import type { Source } from '@/types/chatbot';
-import { toast } from 'sonner';
-export function Knowledge(){const {sources,setSources,bots}=usePrototype();const [search,setSearch]=useState('');const [filter,setFilter]=useState('All');const [open,setOpen]=useState(false);const [type,setType]=useState('Website');const [name,setName]=useState('');const [content,setContent]=useState('');const [assignment,setAssignment]=useState(bots[0]?.name||'Unassigned');const [file,setFile]=useState('');const [error,setError]=useState('');const [edit,setEdit]=useState<string|null>(null);const [drag,setDrag]=useState(false);const shown=sources.filter(s=>(filter==='All'||s.type===filter)&&s.name.toLowerCase().includes(search.toLowerCase()));function add(){const label=type==='File'?file:name;if(!label.trim()){setError('Please add a source name or choose a file.');return;}if(type==='Website'&&!/^https?:\/\//.test(name)){setError('Enter a website URL starting with https://.');return;}if(['FAQ','Manual text'].includes(type)&&!content.trim()){setError('Please add the source content.');return;}const item:Source={id:edit||`source-${Date.now()}`,name:label,type:type==='File'?(file.split('.').pop()?.toUpperCase()||'TXT'):type,bot:assignment,status:'Ready',updated:'Just now'};setSources(s=>edit?s.map(x=>x.id===edit?item:x):[item,...s]);setOpen(false);setError('');setName('');setContent('');setFile('');setEdit(null);toast.success('Sample source saved — no processing performed');}return <><PageHeader title="Knowledge Base" description="The right answers start with the right knowledge."><Button onClick={()=>{setEdit(null);setName('');setContent('');setOpen(true);}}><Plus/>Add Source</Button></PageHeader><div className="mb-7 grid grid-cols-2 gap-4 lg:grid-cols-4">{[{label:'Total sources',value:sources.length,icon:Database,color:'primary'},{label:'Ready to use',value:sources.filter(s=>s.status==='Ready').length,icon:Check,color:'success'},{label:'Website sources',value:sources.filter(s=>s.type==='Website').length,icon:Globe,color:'cyan'},{label:'Documents & FAQs',value:sources.filter(s=>s.type!=='Website').length,icon:FileText,color:'amber'}].map(s=><div className="panel flex items-center gap-4 p-5" key={s.label}><span className={`flex size-10 items-center justify-center rounded-md bg-${s.color}/10 text-${s.color}`}><s.icon className="size-4"/></span><div><p className="text-[11px] text-muted-foreground">{s.label}</p><p className="mt-1 font-display text-2xl font-bold">{s.value}</p></div></div>)}</div><div className="mb-5 flex flex-wrap items-center justify-between gap-4"><div className="w-full sm:w-72"><SearchInput value={search} onChange={setSearch} placeholder="Search sources…"/></div><Segments options={['All','Website','PDF','DOCX','TXT','FAQ','Manual text']} value={filter} onChange={setFilter}/></div><section className="panel overflow-hidden"><div className="overflow-x-auto"><table className="data-table"><thead><tr><th>Source name</th><th>Type</th><th>Chatbot</th><th>Status</th><th>Last updated</th><th>Actions</th></tr></thead><tbody>{shown.map(s=><tr key={s.id}><td><Button variant="ghost" className="h-auto justify-start p-0 text-xs" onClick={()=>{setEdit(s.id);setType(['PDF','DOCX','TXT'].includes(s.type)?'File':s.type);setName(s.name);setFile(s.name);setContent('Sample source content for this prototype.');setAssignment(s.bot);setOpen(true);}}><span className="grid size-8 place-items-center rounded bg-secondary text-muted-foreground">{s.type==='Website'?<Globe/>:s.type==='FAQ'?<MessageSquare/>:<FileText/>}</span>{s.name}</Button></td><td className="text-muted-foreground">{s.type}</td><td>{s.bot}</td><td><Status value={s.status}/></td><td className="text-muted-foreground">{s.updated}</td><td><div className="flex gap-1"><Button variant="ghost" size="icon-sm" title="Reset sample status" aria-label={`Retry ${s.name}`} onClick={()=>{setSources(ss=>ss.map(x=>x.id===s.id?{...x,status:'Ready'}:x));toast.success('Sample status set to Ready');}}><RefreshCw className="size-3.5"/></Button><Button variant="ghost" size="icon-sm" title="Delete source" aria-label={`Delete ${s.name}`} onClick={()=>{setSources(ss=>ss.filter(x=>x.id!==s.id));toast.success('Sample source removed');}}><Trash2 className="size-3.5"/></Button></div></td></tr>)}</tbody></table></div>{shown.length===0&&<EmptyState/>}</section><p className="mt-4 text-[10px] text-muted-foreground">Source content and processing statuses are illustrative. No crawling, indexing, or document processing is connected.</p><Dialog open={open} onOpenChange={setOpen}><DialogContent><DialogHeader><DialogTitle>{edit?'Edit sample source':'Add a knowledge source'}</DialogTitle><DialogDescription>Give your assistant a little more context. Prototype only.</DialogDescription></DialogHeader><Segments options={['Website','File','FAQ','Manual text']} value={type} onChange={setType}/><div className="mt-3">{type==='File'?<label onDragOver={e=>{e.preventDefault();setDrag(true);}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f&&/\.(pdf|docx|txt)$/i.test(f.name))setFile(f.name);else setError('Choose a PDF, DOCX, or TXT file.');}} className={`mb-5 flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed p-8 ${drag?'border-primary bg-primary/10':'border-border'}`}><Upload className="text-primary"/><span className="text-sm">{file||'Drop a document here, or browse'}</span><span className="text-[10px] text-muted-foreground">PDF, DOCX, TXT · sample upload only</span><input type="file" accept=".pdf,.docx,.txt" className="hidden" onChange={e=>setFile(e.target.files?.[0]?.name||'')}/></label>:<><Field label={type==='Website'?'Website URL':type==='FAQ'?'Question':'Source name'}><input value={name} onChange={e=>setName(e.target.value)} placeholder={type==='Website'?'https://example.com/help':type==='FAQ'?'What is your return policy?':'Company information'}/></Field>{type!=='Website'&&<Field label={type==='FAQ'?'Answer':'Content'}><textarea className="min-h-40" value={content} onChange={e=>setContent(e.target.value)} placeholder="Add information your assistant should know…"/></Field>}</>}<Field label="Assign to chatbot"><select value={assignment} onChange={e=>setAssignment(e.target.value)}>{bots.map(b=><option key={b.id}>{b.name}</option>)}</select></Field></div>{error&&<p role="alert" className="text-xs text-destructive">{error}</p>}<div className="flex justify-end gap-2"><Button variant="ghost" onClick={()=>setOpen(false)}>Cancel</Button><Button onClick={add}><Plus/>{edit?'Save source':'Add Source'}</Button></div></DialogContent></Dialog></>}
+import { useState } from "react";
+import {
+  Database,
+  Globe,
+  FileText,
+  MessageSquare,
+  Plus,
+  Upload,
+  Trash2,
+  RefreshCw,
+  MoreHorizontal,
+  Check,
+  File,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { usePrototype } from "@/data/prototype-context";
+import {
+  PageHeader,
+  SearchInput,
+  Segments,
+  Field,
+  Status,
+  EmptyState,
+} from "@/components/chatflow/shared";
+import type { Source } from "@/types/chatbot";
+import { toast } from "sonner";
+export function Knowledge() {
+  const { sources, setSources, bots } = usePrototype();
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState("Website");
+  const [name, setName] = useState("");
+  const [content, setContent] = useState("");
+  const [assignment, setAssignment] = useState(bots[0]?.name || "Unassigned");
+  const [file, setFile] = useState("");
+  const [error, setError] = useState("");
+  const [edit, setEdit] = useState<string | null>(null);
+  const [drag, setDrag] = useState(false);
+  const shown = sources.filter(
+    (s) =>
+      (filter === "All" || s.type === filter) &&
+      s.name.toLowerCase().includes(search.toLowerCase()),
+  );
+  function add() {
+    const label = type === "File" ? file : name;
+    if (!label.trim()) {
+      setError("Please add a source name or choose a file.");
+      return;
+    }
+    if (type === "Website" && !/^https?:\/\//.test(name)) {
+      setError("Enter a website URL starting with https://.");
+      return;
+    }
+    if (["FAQ", "Manual text"].includes(type) && !content.trim()) {
+      setError("Please add the source content.");
+      return;
+    }
+    const item: Source = {
+      id: edit || `source-${Date.now()}`,
+      name: label,
+      type: type === "File" ? file.split(".").pop()?.toUpperCase() || "TXT" : type,
+      bot: assignment,
+      status: "Ready",
+      updated: "Just now",
+    };
+    setSources((s) => (edit ? s.map((x) => (x.id === edit ? item : x)) : [item, ...s]));
+    setOpen(false);
+    setError("");
+    setName("");
+    setContent("");
+    setFile("");
+    setEdit(null);
+    toast.success("Sample source saved — no processing performed");
+  }
+  return (
+    <>
+      <PageHeader
+        title="Knowledge Base"
+        description="The right answers start with the right knowledge."
+      >
+        <Button
+          onClick={() => {
+            setEdit(null);
+            setName("");
+            setContent("");
+            setOpen(true);
+          }}
+        >
+          <Plus />
+          Add Source
+        </Button>
+      </PageHeader>
+      <div className="mb-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[
+          { label: "Total sources", value: sources.length, icon: Database, color: "primary" },
+          {
+            label: "Ready to use",
+            value: sources.filter((s) => s.status === "Ready").length,
+            icon: Check,
+            color: "success",
+          },
+          {
+            label: "Website sources",
+            value: sources.filter((s) => s.type === "Website").length,
+            icon: Globe,
+            color: "cyan",
+          },
+          {
+            label: "Documents & FAQs",
+            value: sources.filter((s) => s.type !== "Website").length,
+            icon: FileText,
+            color: "amber",
+          },
+        ].map((s) => (
+          <div className="panel flex items-center gap-4 p-5" key={s.label}>
+            <span
+              className={`flex size-10 items-center justify-center rounded-md bg-${s.color}/10 text-${s.color}`}
+            >
+              <s.icon className="size-4" />
+            </span>
+            <div>
+              <p className="text-[11px] text-muted-foreground">{s.label}</p>
+              <p className="mt-1 font-display text-2xl font-bold">{s.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="w-full sm:w-72">
+          <SearchInput value={search} onChange={setSearch} placeholder="Search sources…" />
+        </div>
+        <Segments
+          options={["All", "Website", "PDF", "DOCX", "TXT", "FAQ", "Manual text"]}
+          value={filter}
+          onChange={setFilter}
+        />
+      </div>
+      <section className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Source name</th>
+                <th>Type</th>
+                <th>Chatbot</th>
+                <th>Status</th>
+                <th>Last updated</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((s) => (
+                <tr key={s.id}>
+                  <td>
+                    <Button
+                      variant="ghost"
+                      className="h-auto justify-start p-0 text-xs"
+                      onClick={() => {
+                        setEdit(s.id);
+                        setType(["PDF", "DOCX", "TXT"].includes(s.type) ? "File" : s.type);
+                        setName(s.name);
+                        setFile(s.name);
+                        setContent("Sample source content for this prototype.");
+                        setAssignment(s.bot);
+                        setOpen(true);
+                      }}
+                    >
+                      <span className="grid size-8 place-items-center rounded bg-secondary text-muted-foreground">
+                        {s.type === "Website" ? (
+                          <Globe />
+                        ) : s.type === "FAQ" ? (
+                          <MessageSquare />
+                        ) : (
+                          <FileText />
+                        )}
+                      </span>
+                      {s.name}
+                    </Button>
+                  </td>
+                  <td className="text-muted-foreground">{s.type}</td>
+                  <td>{s.bot}</td>
+                  <td>
+                    <Status value={s.status} />
+                  </td>
+                  <td className="text-muted-foreground">{s.updated}</td>
+                  <td>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title="Reset sample status"
+                        aria-label={`Retry ${s.name}`}
+                        onClick={() => {
+                          setSources((ss) =>
+                            ss.map((x) => (x.id === s.id ? { ...x, status: "Ready" } : x)),
+                          );
+                          toast.success("Sample status set to Ready");
+                        }}
+                      >
+                        <RefreshCw className="size-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title="Delete source"
+                        aria-label={`Delete ${s.name}`}
+                        onClick={() => {
+                          setSources((ss) => ss.filter((x) => x.id !== s.id));
+                          toast.success("Sample source removed");
+                        }}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {shown.length === 0 && <EmptyState />}
+      </section>
+      <p className="mt-4 text-[10px] text-muted-foreground">
+        Source content and processing statuses are illustrative. No crawling, indexing, or document
+        processing is connected.
+      </p>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{edit ? "Edit sample source" : "Add a knowledge source"}</DialogTitle>
+            <DialogDescription>
+              Give your assistant a little more context. Prototype only.
+            </DialogDescription>
+          </DialogHeader>
+          <Segments
+            options={["Website", "File", "FAQ", "Manual text"]}
+            value={type}
+            onChange={setType}
+          />
+          <div className="mt-3">
+            {type === "File" ? (
+              <label
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDrag(true);
+                }}
+                onDragLeave={() => setDrag(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDrag(false);
+                  const f = e.dataTransfer.files[0];
+                  if (f && /\.(pdf|docx|txt)$/i.test(f.name)) setFile(f.name);
+                  else setError("Choose a PDF, DOCX, or TXT file.");
+                }}
+                className={`mb-5 flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed p-8 ${drag ? "border-primary bg-primary/10" : "border-border"}`}
+              >
+                <Upload className="text-primary" />
+                <span className="text-sm">{file || "Drop a document here, or browse"}</span>
+                <span className="text-[10px] text-muted-foreground">
+                  PDF, DOCX, TXT · sample upload only
+                </span>
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.txt"
+                  className="hidden"
+                  onChange={(e) => setFile(e.target.files?.[0]?.name || "")}
+                />
+              </label>
+            ) : (
+              <>
+                <Field
+                  label={
+                    type === "Website" ? "Website URL" : type === "FAQ" ? "Question" : "Source name"
+                  }
+                >
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder={
+                      type === "Website"
+                        ? "https://example.com/help"
+                        : type === "FAQ"
+                          ? "What is your return policy?"
+                          : "Company information"
+                    }
+                  />
+                </Field>
+                {type !== "Website" && (
+                  <Field label={type === "FAQ" ? "Answer" : "Content"}>
+                    <textarea
+                      className="min-h-40"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="Add information your assistant should know…"
+                    />
+                  </Field>
+                )}
+              </>
+            )}
+            <Field label="Assign to chatbot">
+              <select value={assignment} onChange={(e) => setAssignment(e.target.value)}>
+                {bots.map((b) => (
+                  <option key={b.id}>{b.name}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          {error && (
+            <p role="alert" className="text-xs text-destructive">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={add}>
+              <Plus />
+              {edit ? "Save source" : "Add Source"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

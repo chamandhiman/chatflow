@@ -1,8 +1,119 @@
-import { useState } from 'react';
-import { BookOpen, Code2, MessageSquare, Search, ArrowRight, ChevronDown, Mail, LifeBuoy, Bot, Database } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
-import { PageHeader, SearchInput, EmptyState } from '@/components/chatflow/shared';
-import { Button } from '@/components/ui/button';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
-import { toast } from 'sonner';
-export function Help(){const [search,setSearch]=useState('');const faqs=[{q:'How do I create my first chatbot?',a:'Open My Chatbots and select Create Chatbot. Follow the four steps to add your basic information, a sample knowledge source, and widget appearance.'},{q:'How do I install a chatbot on my website?',a:'Go to Website Install, select your chatbot, and copy the code. The installation snippet is illustrative in this prototype and will not load a real widget.'},{q:'What content can I add to my knowledge base?',a:'You can add sample website sources, PDF, DOCX, TXT, FAQs, and manual text. This prototype saves source records locally without processing their content.'},{q:'Will my prototype changes be saved?',a:'Changes are retained while navigating within this session. Reloading the app resets the sample workspace. No database is connected.'},{q:'Does selecting a plan charge my card?',a:'No. Pricing and billing are sample interfaces only. No payment gateway is connected.'}];const shown=faqs.filter(f=>`${f.q} ${f.a}`.toLowerCase().includes(search.toLowerCase()));return <><PageHeader title="Help & Support" description="A little guidance, whenever you need it."/><div className="max-w-4xl"><div className="mb-8 max-w-xl"><SearchInput value={search} onChange={setSearch} placeholder="Search for answers…"/></div><div className="mb-8 grid gap-4 sm:grid-cols-3">{[{name:'Getting started',icon:Bot,to:'/chatbots',text:'Create your first assistant.'},{name:'Knowledge guide',icon:Database,to:'/knowledge',text:'Give your assistant context.'},{name:'Installation',icon:Code2,to:'/install',text:'Add your widget to a website.'}].map(c=><Link key={c.name} to={c.to as '/chatbots'|'/knowledge'|'/install'} className="panel block p-5 transition-colors hover:border-primary"><c.icon className="mb-4 size-6 text-primary"/><h2 className="text-sm font-bold">{c.name}</h2><p className="mt-2 text-[11px] text-muted-foreground">{c.text}</p><ArrowRight className="mt-5 size-4 text-muted-foreground"/></Link>)}</div><h2 className="mb-4 text-lg font-bold">Frequently asked questions</h2><Accordion type="single" collapsible>{shown.map((f,i)=><AccordionItem key={f.q} value={String(i)}><AccordionTrigger className="text-sm">{f.q}</AccordionTrigger><AccordionContent className="text-xs leading-relaxed text-muted-foreground">{f.a}</AccordionContent></AccordionItem>)}</Accordion>{shown.length===0&&<EmptyState/>}<div className="mt-9 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-7"><div><h3 className="font-semibold">Still have a question?</h3><p className="mt-1 text-xs text-muted-foreground">Reach out to your workspace administrator.</p></div><Button variant="outline" onClick={()=>toast.info('Support messaging is not connected in this prototype')}><MessageSquare/>Contact support</Button></div></div></>}
+import { useState } from "react";
+import {
+  BookOpen,
+  Code2,
+  MessageSquare,
+  Search,
+  ArrowRight,
+  ChevronDown,
+  Mail,
+  LifeBuoy,
+  Bot,
+  Database,
+} from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { PageHeader, SearchInput, EmptyState } from "@/components/chatflow/shared";
+import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import { toast } from "sonner";
+export function Help() {
+  const [search, setSearch] = useState("");
+  const faqs = [
+    {
+      q: "How do I create my first chatbot?",
+      a: "Open My Chatbots and select Create Chatbot. Follow the four steps to add your basic information, a sample knowledge source, and widget appearance.",
+    },
+    {
+      q: "How do I install a chatbot on my website?",
+      a: "Go to Website Install, select your chatbot, and copy the code. The installation snippet is illustrative in this prototype and will not load a real widget.",
+    },
+    {
+      q: "What content can I add to my knowledge base?",
+      a: "You can add sample website sources, PDF, DOCX, TXT, FAQs, and manual text. This prototype saves source records locally without processing their content.",
+    },
+    {
+      q: "Will my prototype changes be saved?",
+      a: "Changes are retained while navigating within this session. Reloading the app resets the sample workspace. No database is connected.",
+    },
+    {
+      q: "Does selecting a plan charge my card?",
+      a: "No. Pricing and billing are sample interfaces only. No payment gateway is connected.",
+    },
+  ];
+  const shown = faqs.filter((f) => `${f.q} ${f.a}`.toLowerCase().includes(search.toLowerCase()));
+  return (
+    <>
+      <PageHeader title="Help & Support" description="A little guidance, whenever you need it." />
+      <div className="max-w-4xl">
+        <div className="mb-8 max-w-xl">
+          <SearchInput value={search} onChange={setSearch} placeholder="Search for answers…" />
+        </div>
+        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              name: "Getting started",
+              icon: Bot,
+              to: "/chatbots",
+              text: "Create your first assistant.",
+            },
+            {
+              name: "Knowledge guide",
+              icon: Database,
+              to: "/knowledge",
+              text: "Give your assistant context.",
+            },
+            {
+              name: "Installation",
+              icon: Code2,
+              to: "/install",
+              text: "Add your widget to a website.",
+            },
+          ].map((c) => (
+            <Link
+              key={c.name}
+              to={c.to as "/chatbots" | "/knowledge" | "/install"}
+              className="panel block p-5 transition-colors hover:border-primary"
+            >
+              <c.icon className="mb-4 size-6 text-primary" />
+              <h2 className="text-sm font-bold">{c.name}</h2>
+              <p className="mt-2 text-[11px] text-muted-foreground">{c.text}</p>
+              <ArrowRight className="mt-5 size-4 text-muted-foreground" />
+            </Link>
+          ))}
+        </div>
+        <h2 className="mb-4 text-lg font-bold">Frequently asked questions</h2>
+        <Accordion type="single" collapsible>
+          {shown.map((f, i) => (
+            <AccordionItem key={f.q} value={String(i)}>
+              <AccordionTrigger className="text-sm">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-xs leading-relaxed text-muted-foreground">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+        {shown.length === 0 && <EmptyState />}
+        <div className="mt-9 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-7">
+          <div>
+            <h3 className="font-semibold">Still have a question?</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Reach out to your workspace administrator.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => toast.info("Support messaging is not connected in this prototype")}
+          >
+            <MessageSquare />
+            Contact support
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}
