@@ -44,6 +44,8 @@ import { brand } from "@/data/mockData";
 import { usePrototype } from "@/data/prototype-context";
 import { Brand, SearchInput } from "./shared";
 import { ChatbotWizard } from "./wizard";
+import { useAuth } from "@/lib/auth-context";
+import { AuthModal } from "./auth-modal";
 import { toast } from "sonner";
 const nav = [
   { name: "Overview", to: "/dashboard", icon: LayoutDashboard },
@@ -63,9 +65,30 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const [mobile, setMobile] = useState(false);
   const [workspace, setWorkspace] = useState(brand.workspace);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { bots, plan } = usePrototype();
+  const {
+    user,
+    userProfile,
+    activeWorkspace,
+    userWorkspaces,
+    signOut,
+    switchWorkspace,
+    isMockMode,
+    setMockMode,
+  } = useAuth();
   const navigate = useNavigate();
+
+  const currentWorkspaceName = activeWorkspace?.name || workspace;
+  const currentUserName = userProfile?.displayName || user?.displayName || (isMockMode ? "Alex Morgan" : "User");
+  const currentUserEmail = user?.email || (isMockMode ? "alex@acme.com" : "");
+  const userInitials = (currentUserName || "AM")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
   return (
     <div className="flex min-h-screen w-full bg-background">
       {mobile && (
@@ -101,15 +124,17 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 className={`h-[58px] w-full justify-start gap-3 bg-card ${collapsed ? "px-2" : "px-3"}`}
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-secondary font-display text-sm">
-                  A
+                  {currentWorkspaceName[0] || "W"}
                 </span>
                 {!collapsed && (
                   <>
                     <span className="min-w-0 text-left">
-                      <span className="block truncate text-xs font-semibold">{workspace}</span>
+                      <span className="block truncate text-xs font-semibold">{currentWorkspaceName}</span>
                       <span className="mt-0.5 block text-[10px] text-muted-foreground">
-                        {plan} plan{" "}
-                        <span className="ml-1 rounded bg-primary/15 px-1 text-primary">PRO</span>
+                        {activeWorkspace?.plan || plan} plan{" "}
+                        <span className={`ml-1 rounded px-1 ${user ? "bg-success/15 text-success" : "bg-amber/15 text-amber"}`}>
+                          {user ? "LIVE" : "DEMO"}
+                        </span>
                       </span>
                     </span>
                     <ChevronsUpDown className="ml-auto size-3 text-muted-foreground" />
@@ -119,12 +144,19 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuLabel>Switch workspace</DropdownMenuLabel>
-              {[brand.workspace, "Personal Workspace"].map((w) => (
-                <DropdownMenuItem key={w} onSelect={() => setWorkspace(w)}>
-                  {w}
-                  {workspace === w && <Check className="ml-auto size-3" />}
-                </DropdownMenuItem>
-              ))}
+              {userWorkspaces.length > 0
+                ? userWorkspaces.map((w) => (
+                    <DropdownMenuItem key={w.id} onSelect={() => switchWorkspace(w.id)}>
+                      {w.name}
+                      {activeWorkspace?.id === w.id && <Check className="ml-auto size-3" />}
+                    </DropdownMenuItem>
+                  ))
+                : [brand.workspace, "Personal Workspace"].map((w) => (
+                    <DropdownMenuItem key={w} onSelect={() => setWorkspace(w)}>
+                      {w}
+                      {currentWorkspaceName === w && <Check className="ml-auto size-3" />}
+                    </DropdownMenuItem>
+                  ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -189,14 +221,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   className="h-auto w-full justify-start gap-3 p-0 hover:bg-transparent"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-amber/15 text-xs font-semibold text-amber">
-                    AM
+                    {userInitials}
                   </span>
                   {!collapsed && (
                     <>
                       <span className="min-w-0 text-left">
-                        <span className="block text-xs font-semibold">Alex Morgan</span>
+                        <span className="block text-xs font-semibold">{currentUserName}</span>
                         <span className="block truncate text-[10px] text-muted-foreground">
-                          alex@acme.com
+                          {currentUserEmail || (user ? "" : "demo@chatflow.ai")}
                         </span>
                       </span>
                       <ChevronDown className="ml-auto size-3 text-muted-foreground" />
@@ -205,15 +237,34 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-52">
-                <DropdownMenuLabel>Alex Morgan</DropdownMenuLabel>
+                <DropdownMenuLabel>{currentUserName}</DropdownMenuLabel>
                 <DropdownMenuItem onSelect={() => navigate({ to: "/settings" })}>
                   <Users />
                   Account settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate({ to: "/" })}>
-                  <LogOut />
-                  Exit demo workspace
-                </DropdownMenuItem>
+                {user ? (
+                  <DropdownMenuItem
+                    onSelect={async () => {
+                      await signOut();
+                      toast.success("Signed out");
+                      navigate({ to: "/" });
+                    }}
+                  >
+                    <LogOut />
+                    Sign out
+                  </DropdownMenuItem>
+                ) : (
+                  <>
+                    <DropdownMenuItem onSelect={() => setAuthModalOpen(true)}>
+                      <Users />
+                      Sign in to Live Account
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => navigate({ to: "/" })}>
+                      <LogOut />
+                      Exit demo workspace
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -305,7 +356,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               className="size-8 rounded-full bg-amber/15 p-0 text-[10px] text-amber"
             >
               <Link to="/settings" aria-label="Your profile">
-                AM
+                {userInitials}
               </Link>
             </Button>
           </div>
@@ -314,8 +365,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <footer className="flex justify-between gap-4 border-t border-border px-8 py-4 text-[10px] text-muted-foreground">
           <span>© 2026 ChatFlow AI</span>
           <span className="flex items-center gap-1.5">
-            <span className="size-1.5 rounded-full bg-success" />
-            Demo workspace · UI prototype
+            <span className={`size-1.5 rounded-full ${user ? "bg-success" : "bg-amber"}`} />
+            {user ? "Live Firebase Workspace" : "Demo workspace · UI prototype"}
           </span>
         </footer>
       </div>
@@ -355,6 +406,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </DialogContent>
       </Dialog>
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </div>
   );
 }

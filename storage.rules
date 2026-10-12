@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Workspaces isolated storage
+    // Files are organized under: /workspaces/{workspaceId}/sources/{fileName}
+    match /workspaces/{workspaceId}/{allPaths=**} {
+      // User must be authenticated to read/write workspace documents
+      // When Firebase Storage connects to Firestore, token claims or Firestore lookups govern granular workspace checks
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+                   && request.resource.size < 25 * 1024 * 1024 // Max 25 MB per document
+                   && (request.resource.contentType.matches('application/pdf')
+                       || request.resource.contentType.matches('text/.*')
+                       || request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                       || request.resource.contentType.matches('image/.*'));
+      allow delete: if isAuthenticated();
+    }
+  }
+}

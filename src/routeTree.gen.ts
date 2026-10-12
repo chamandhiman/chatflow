@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as ChatbotsRouteImport } from './routes/chatbots'
 import { Route as ConversationsRouteImport } from './routes/conversations'
@@ -34,6 +35,11 @@ const IndexRoute = IndexRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillingRoute = BillingRouteImport.update({
@@ -110,6 +116,7 @@ const ChatbotsIdStudioRoute = ChatbotsIdStudioRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/billing': typeof BillingRoute
   '/chatbots': typeof ChatbotsRouteWithChildren
   '/conversations': typeof ConversationsRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/billing': typeof BillingRoute
   '/conversations': typeof ConversationsRoute
   '/dashboard': typeof DashboardRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/auth': typeof AuthRoute
   '/billing': typeof BillingRoute
   '/chatbots': typeof ChatbotsRouteWithChildren
   '/conversations': typeof ConversationsRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/auth'
     | '/billing'
     | '/chatbots'
     | '/conversations'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analytics'
+    | '/auth'
     | '/billing'
     | '/conversations'
     | '/dashboard'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analytics'
+    | '/auth'
     | '/billing'
     | '/chatbots'
     | '/conversations'
@@ -220,6 +232,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  AuthRoute: typeof AuthRoute
   BillingRoute: typeof BillingRoute
   ChatbotsRoute: typeof ChatbotsRouteWithChildren
   ConversationsRoute: typeof ConversationsRoute
@@ -248,6 +261,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billing': {
@@ -368,6 +388,7 @@ const ChatbotsRouteWithChildren = ChatbotsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  AuthRoute: AuthRoute,
   BillingRoute: BillingRoute,
   ChatbotsRoute: ChatbotsRouteWithChildren,
   ConversationsRoute: ConversationsRoute,

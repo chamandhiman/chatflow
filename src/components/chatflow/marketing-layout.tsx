@@ -1,10 +1,18 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "./shared";
+import { useAuth } from "@/lib/auth-context";
+import { AuthModal } from "./auth-modal";
+
 export function MarketingLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
+  const { user, isMockMode } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto grid h-20 max-w-[1240px] grid-cols-[minmax(0,1fr)_auto] items-center gap-5 border-b border-border px-6 lg:flex lg:justify-between">
@@ -18,18 +26,38 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
           <Link to="/help">Resources</Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" className="hidden text-xs sm:flex">
-            <Link to="/dashboard">
-              Sign In
-              <ArrowUpRight />
-            </Link>
-          </Button>
-          <Button asChild className="text-xs">
-            <Link to="/dashboard">
-              Start Building
-              <ArrowUpRight />
-            </Link>
-          </Button>
+          {user ? (
+            <Button asChild className="text-xs">
+              <Link to="/dashboard">
+                Go to Workspace
+                <ArrowUpRight />
+              </Link>
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                className="hidden text-xs sm:flex"
+                onClick={() => {
+                  setAuthTab("signin");
+                  setAuthOpen(true);
+                }}
+              >
+                Sign In
+                <ArrowUpRight />
+              </Button>
+              <Button
+                className="text-xs"
+                onClick={() => {
+                  setAuthTab("signup");
+                  setAuthOpen(true);
+                }}
+              >
+                Start Building
+                <ArrowUpRight />
+              </Button>
+            </>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -87,6 +115,12 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
           <span>Frontend prototype · no live AI service</span>
         </div>
       </footer>
+      <AuthModal
+        open={authOpen}
+        onOpenChange={setAuthOpen}
+        defaultTab={authTab}
+        onSuccess={() => navigate({ to: "/dashboard" })}
+      />
     </div>
   );
 }
